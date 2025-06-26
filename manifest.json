@@ -1,5 +1,5 @@
 {
-  "name": "Sticker Picker",
+  "display_name": "Sticker Picker",
   "version": "1.0",
   "manifest_version": 1,
   "description": "Adds a sticker picker panel to easily insert image links.",
