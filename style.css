@@ -28,7 +28,7 @@
     z-index: 1000;
 }
 
-/* 【新增】用来装所有表情图片的网格容器 */
+/* 用来装所有表情图片的网格容器 */
 #sticker-grid {
     width: 100%;
     height: 100%;
@@ -38,7 +38,7 @@
     gap: 10px;
 }
 
-/* 【新增】“添加新表情 +”按钮的样式，现在它在面板里面了 */
+/* “添加新表情 +”按钮的样式，现在它在面板里面了 */
 #add-sticker-button-internal {
     position: absolute; /* 相对于面板进行绝对定位 */
     top: 8px;
@@ -142,4 +142,49 @@
 /* 当鼠标悬停在表情包容器上时，显示删除按钮 */
 .sticker-wrapper:hover .delete-sticker-btn {
     display: block;
+}
+
+
+/* 表情选择面板的布局现在由Flexbox控制，垂直排列 */
+#sticker-picker-panel {
+    display: flex;
+    flex-direction: column;
+    padding: 0; /* 移除旧的padding，由内部元素控制 */
+}
+
+/* 表情网格现在会占据大部分空间 */
+#sticker-grid {
+    flex-grow: 1; /* 占据所有剩余空间 */
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+/* 分类导航栏的样式 */
+#sticker-categories {
+    flex-shrink: 0; /* 防止导航栏被压缩 */
+    display: flex;
+    overflow-x: auto; /* 如果分类太多，可以水平滚动 */
+    padding: 8px;
+    background-color: #e0e0e0;
+    border-top: 1px solid #ccc;
+}
+
+/* 单个分类按钮的样式 */
+.category-btn {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 16px;
+    padding: 5px 12px;
+    margin-right: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    white-space: nowrap; /* 防止分类名换行 */
+    flex-shrink: 0;
+}
+
+/* 当前选中分类按钮的“高亮”样式 */
+.category-btn.active {
+    background-color: #4CAF50;
+    color: white;
+    border-color: #4CAF50;
 }
