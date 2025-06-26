@@ -1,7 +1,6 @@
 import { getAllStickers } from './sticker-loader.js';
 
-
-// 面板
+// === 第一部分：创建界面元素 (这部分不变) ===
 const stickerButton = document.createElement('button');
 stickerButton.id = 'sticker-picker-button';
 stickerButton.innerHTML = '😀';
@@ -34,37 +33,57 @@ if (sendForm) {
     document.body.appendChild(addFormPanel);
 }
 
-// === 第二部分：数据处理与渲染 ===
+// === 第二部分：数据处理与渲染 (重大升级) ===
 
-// loadStickers 函数现在变得非常简洁！
+const LOCAL_STORAGE_KEY = 'my_user_stickers';
+
 async function loadStickers() {
     const stickerGrid = document.querySelector('#sticker-grid');
     if (!stickerGrid) return;
-    stickerGrid.innerHTML = '加载中...'; // 提示用户正在加载
+    stickerGrid.innerHTML = '加载中...';
 
-    // 直接调用我们导入的函数！
+    // sticker-loader.js 现在帮我们处理好了数据获取和合并
     const uniqueStickers = await getAllStickers();
+    const userStickerUrls = new Set(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '[]').map(s => s.url));
 
-    stickerGrid.innerHTML = ''; // 清空“加载中...”
+    stickerGrid.innerHTML = '';
     if (uniqueStickers.length === 0) {
         stickerGrid.innerHTML = '没有表情...';
         return;
     }
-
+    
     uniqueStickers.forEach(sticker => {
+        // 创建一个新的包裹容器
+        const wrapper = document.createElement('div');
+        wrapper.className = 'sticker-wrapper';
+
+        // 创建图片元素
         const img = document.createElement('img');
         img.src = sticker.url;
         img.title = sticker.name;
         img.dataset.name = sticker.name;
         img.dataset.url = sticker.url;
         img.className = 'sticker-item';
-        stickerGrid.appendChild(img);
+
+        // 把图片放进包裹容器
+        wrapper.appendChild(img);
+
+        // 【核心逻辑】只为用户自己添加的表情创建删除按钮
+        if (userStickerUrls.has(sticker.url)) {
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-sticker-btn';
+            deleteBtn.innerHTML = '×'; // 一个乘号作为删除图标
+            deleteBtn.title = '删除这个表情';
+            deleteBtn.dataset.url = sticker.url; // 把URL存到按钮上，方便删除时识别
+            wrapper.appendChild(deleteBtn);
+        }
+        
+        // 把整个包裹容器添加到网格中
+        stickerGrid.appendChild(wrapper);
     });
 }
 
-// saveSticker 函数保持不变
 function saveSticker() {
-    const LOCAL_STORAGE_KEY = 'my_user_stickers';
     const nameInput = document.querySelector('#new-sticker-name');
     const urlInput = document.querySelector('#new-sticker-url');
     const newName = nameInput.value.trim();
@@ -85,60 +104,55 @@ function saveSticker() {
     addFormPanel.style.display = 'none';
 }
 
-// === 第三部分：事件监听 (这部分逻辑基本不变) ===
+// === 第三部分：事件监听 ===
 
-// 1. 点击主表情按钮 😀，只负责打开/关闭表情面板
+// 主表情按钮的逻辑保持不变
 stickerButton.addEventListener('click', (event) => {
     event.preventDefault();
+    event.stopPropagation(); 
     const isVisible = stickerPanel.style.display === 'block';
-    // 如果即将打开面板，就先确保添加面板是关闭的
     if (!isVisible) {
         addFormPanel.style.display = 'none';
         loadStickers();
     }
     stickerPanel.style.display = isVisible ? 'none' : 'block';
 });
-// 2. 使用一个全局的点击事件监听器来处理所有“关闭”和“功能”逻辑
+
 document.body.addEventListener('click', (event) => {
     const target = event.target;
-
-    // --- 功能按钮的“打开”逻辑 ---
-
-    // 点击面板内部的“添加”按钮 ➕
     if (target.id === 'add-sticker-button-internal') {
-        addFormPanel.style.display = 'block'; // 显示添加表单
-        stickerPanel.style.display = 'none';  // 同时隐藏表情选择面板
-    }
-    // 点击表单内部的“保存”按钮
-    if (target.id === 'save-sticker-button') {
-        saveSticker();
-    }
-    // 点击表单内部的“取消”按钮
-    if (target.id === 'cancel-add-sticker-button') {
-        addFormPanel.style.display = 'none'; // 隐藏添加表单
-    }
-
-    // --- “点击外部关闭”的核心逻辑 ---
-
-    // 检查是否需要关闭“表情选择面板”
-    // 条件：面板是打开的，并且点击的目标不是面板本身，也不是面板的子元素，也不是打开它的那个主按钮
-    if (stickerPanel.style.display === 'block' && !stickerPanel.contains(target) && !stickerButton.contains(target)) {
+        addFormPanel.style.display = 'block';
         stickerPanel.style.display = 'none';
-    }
-
-    // 检查是否需要关闭“添加表情面板”
-    // 条件：面板是打开的，并且点击的目标不是面板本身，也不是面板的子元素
-    // （因为打开它的+按钮在另一个已关闭的面板里，所以不用检查它）
-    if (addFormPanel.style.display === 'block' && !addFormPanel.contains(target)) {
+    } else if (target.id === 'save-sticker-button') {
+        saveSticker();
+    } else if (target.id === 'cancel-add-sticker-button') {
+        addFormPanel.style.display = 'none';
+    } else if (stickerPanel.style.display === 'block' && !stickerPanel.contains(target) && !stickerButton.contains(target)) {
+        stickerPanel.style.display = 'none';
+    } else if (addFormPanel.style.display === 'block' && !addFormPanel.contains(target)) {
         addFormPanel.style.display = 'none';
     }
 });
 
-
-// 3. 点击某个表情图片 (插入链接)
 stickerPanel.addEventListener('click', (event) => {
-    if (event.target.className === 'sticker-item') {
-        const sticker = event.target;
+    const target = event.target;
+
+    // 情况一：点击了删除按钮
+    if (target.className === 'delete-sticker-btn') {
+        const urlToDelete = target.dataset.url;
+        if (confirm('确定要删除这个表情吗？')) {
+            let userStickers = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '[]');
+            // 过滤掉要删除的表情
+            userStickers = userStickers.filter(s => s.url !== urlToDelete);
+            // 保存更新后的列表
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(userStickers));
+            // 重新加载面板以更新视图
+            loadStickers(); 
+        }
+    }
+    // 情况二：点击了表情图片（和以前一样）
+    else if (target.className === 'sticker-item') {
+        const sticker = target;
         const name = sticker.dataset.name;
         const url = sticker.dataset.url;
         const markdownText = `![${name}](${url})`;
