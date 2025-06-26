@@ -87,28 +87,55 @@ function saveSticker() {
 
 // === 第三部分：事件监听 (这部分逻辑基本不变) ===
 
+// 1. 点击主表情按钮 😀，只负责打开/关闭表情面板
 stickerButton.addEventListener('click', (event) => {
     event.preventDefault();
     const isVisible = stickerPanel.style.display === 'block';
-    stickerPanel.style.display = isVisible ? 'none' : 'block';
+    // 如果即将打开面板，就先确保添加面板是关闭的
     if (!isVisible) {
+        addFormPanel.style.display = 'none';
         loadStickers();
     }
+    stickerPanel.style.display = isVisible ? 'none' : 'block';
 });
-
+// 2. 使用一个全局的点击事件监听器来处理所有“关闭”和“功能”逻辑
 document.body.addEventListener('click', (event) => {
-    if (event.target.id === 'add-sticker-button-internal') {
-        addFormPanel.style.display = 'block';
-        stickerPanel.style.display = 'none';
+    const target = event.target;
+
+    // --- 功能按钮的“打开”逻辑 ---
+
+    // 点击面板内部的“添加”按钮 ➕
+    if (target.id === 'add-sticker-button-internal') {
+        addFormPanel.style.display = 'block'; // 显示添加表单
+        stickerPanel.style.display = 'none';  // 同时隐藏表情选择面板
     }
-    if (event.target.id === 'save-sticker-button') {
+    // 点击表单内部的“保存”按钮
+    if (target.id === 'save-sticker-button') {
         saveSticker();
     }
-    if (event.target.id === 'cancel-add-sticker-button') {
+    // 点击表单内部的“取消”按钮
+    if (target.id === 'cancel-add-sticker-button') {
+        addFormPanel.style.display = 'none'; // 隐藏添加表单
+    }
+
+    // --- “点击外部关闭”的核心逻辑 ---
+
+    // 检查是否需要关闭“表情选择面板”
+    // 条件：面板是打开的，并且点击的目标不是面板本身，也不是面板的子元素，也不是打开它的那个主按钮
+    if (stickerPanel.style.display === 'block' && !stickerPanel.contains(target) && !stickerButton.contains(target)) {
+        stickerPanel.style.display = 'none';
+    }
+
+    // 检查是否需要关闭“添加表情面板”
+    // 条件：面板是打开的，并且点击的目标不是面板本身，也不是面板的子元素
+    // （因为打开它的+按钮在另一个已关闭的面板里，所以不用检查它）
+    if (addFormPanel.style.display === 'block' && !addFormPanel.contains(target)) {
         addFormPanel.style.display = 'none';
     }
 });
 
+
+// 3. 点击某个表情图片 (插入链接)
 stickerPanel.addEventListener('click', (event) => {
     if (event.target.className === 'sticker-item') {
         const sticker = event.target;
