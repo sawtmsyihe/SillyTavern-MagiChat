@@ -52,7 +52,7 @@ qmbPanel.innerHTML = `
             <input type="text" id="sawtms-qmb-redpacket-message" class="sawtms-qmb-input" placeholder="例如: 恭喜发财">
         </div>
         <div id="sawtms-qmb-content-system" class="sawtms-qmb-content-panel">
-            <textarea id="sawtms-qmb-system-content" class="sawtms-qmb-input" rows="5" placeholder="例如: [时间过去了一天]"></textarea>
+            <textarea id="sawtms-qmb-system-content" class="sawtms-qmb-input" rows="5" placeholder="例如: 我拍了拍char/我领取了char的红包/时间等"></textarea>
         </div>
         <div id="sawtms-qmb-content-sticker" class="sawtms-qmb-content-panel">
             <div id="sawtms-sticker-grid">加载中...</div>
