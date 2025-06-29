@@ -1,8 +1,8 @@
 {
-  "display_name": "Sticker Picker",
-  "version": "1.0",
-  "manifest_version": 1,
-  "description": "Adds a sticker picker panel to easily insert image links.",
+  "display_name": "MagiChat-适配听澜的短对话聊天",
+  "version": "2.0",
+  "manifest_version": 2,
+  "description": "多功能消息生成器",
   "js": ["script.js"],
   "css": ["style.css"]
 }
