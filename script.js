@@ -52,6 +52,10 @@ qmbPanel.innerHTML = `
             <input type="text" id="sawtms-qmb-redpacket-message" class="sawtms-qmb-input" placeholder="例如: 恭喜发财">
         </div>
         <div id="sawtms-qmb-content-system" class="sawtms-qmb-content-panel">
+            <div class="sawtms-system-label-container">
+                <label class="sawtms-qmb-label">系统消息内容:</label>
+                <button id="sawtms-insert-timestamp-btn" class="sawtms-text-btn">➕ 插入当前时间戳</button>
+            </div>
             <textarea id="sawtms-qmb-system-content" class="sawtms-qmb-input" rows="5" placeholder="例如: 我拍了拍char/我领取了char的红包/时间等"></textarea>
         </div>
         <div id="sawtms-qmb-content-sticker" class="sawtms-qmb-content-panel">
@@ -370,4 +374,25 @@ doImportBtn.addEventListener('click', async () => {
     // 清空文本框并关闭面板
     importTextarea.value = '';
     importPanel.style.display = 'none';
+});
+
+// =======================================================
+// 【新增】为系统消息快捷插入时间戳
+// =======================================================
+const insertTimestampBtn = document.getElementById('sawtms-insert-timestamp-btn');
+const systemTextarea = document.getElementById('sawtms-qmb-system-content');
+
+insertTimestampBtn.addEventListener('click', (e) => {
+    e.preventDefault(); // 防止意外行为
+    
+    const timestampText = '{{isodate}} {{isotime}}';
+    
+    // 如果输入框不为空，就在前面加一个空格
+    const separator = systemTextarea.value.trim().length > 0 ? ' ' : '';
+    
+    // 将时间戳变量插入到文本框
+    systemTextarea.value += separator + timestampText;
+    
+    // 插入后，让光标聚焦在文本框，方便继续输入
+    systemTextarea.focus();
 });
