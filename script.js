@@ -238,9 +238,12 @@ stickerContentPanel.addEventListener('click', (event) => {
         importPanel.style.display = 'flex';
         return;
     }
+    // --- 点击分类按钮 ---
     if (target.classList.contains('sawtms-category-btn')) {
         currentCategory = target.dataset.category;
-        renderCategories();
+        const allCategoryBtns = stickerCategoriesContainer.querySelectorAll('.sawtms-category-btn');
+        allCategoryBtns.forEach(btn => btn.classList.remove('active'));
+        target.classList.add('active');
         renderStickerGrid();
         return;
     }
