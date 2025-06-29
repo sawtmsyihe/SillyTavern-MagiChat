@@ -294,3 +294,84 @@
     color: white;
     box-shadow: 0 4px 15px rgba(161, 196, 253, 0.3);
 }
+
+.sawtms-system-label-container {
+    display: flex;
+    justify-content: space-between; /* 让标签在左，按钮在右 */
+    align-items: center;
+    width: 100%;
+}
+
+/* 新增：小巧的文本按钮样式 */
+.sawtms-text-btn {
+    background: none;
+    border: none;
+    color: #6495ED; /* 使用一个柔和的蓝色，与主题匹配 */
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.sawtms-text-btn:hover {
+    background-color: #e0f0ff; /* 悬停时有淡淡的背景色 */
+    text-decoration: none;
+}
+
+
+/* =================================== */
+/* Mobile Responsive Styles (移动端适配) */
+/* =================================== */
+@media (max-width: 768px) {
+
+    /* * 主要改动：让主面板在小屏幕上变小并居中。
+     * 我们覆盖了拖拽后的位置，以确保在手机上总能以一个合理的位置出现。
+    */
+    #sawtms-qmb-panel {
+        width: 80vw; /* 宽度为屏幕宽度的95% */
+        height: 320px; /* 减小高度 */
+        padding: 10px;
+        border-radius: 16px;
+        
+        /* 覆盖JS设置的拖拽位置，使其在移动端默认居中于底部 */
+        left: 50% !important;
+        top: auto !important;
+        bottom: 60px !important; /* 离底部更近一些 */
+        transform: translateX(-50%) !important;
+    }
+
+    /* 调整标签页按钮的大小和间距 */
+    .sawtms-qmb-tabs-container {
+        gap: 6px;
+        padding-bottom: 10px;
+    }
+
+    .sawtms-qmb-tab {
+        padding: 5px 10px;
+        font-size: 13px;
+    }
+    
+    /* 缩小表情包图片的大小 */
+    .sawtms-sticker-item {
+        width: 55px;
+        height: 55px;
+    }
+    
+    /* 缩小底部主按钮的内边距 */
+    #sawtms-qmb-insert-button {
+        padding: 10px;
+        border-radius: 12px;
+    }
+    
+    /* 调整导入面板的大小 */
+    #sawtms-import-panel {
+        width: 95vw;
+        padding: 15px;
+    }
+
+    .sawtms-import-textarea {
+        height: 150px; /* 减小文本框高度 */
+    }
+}
